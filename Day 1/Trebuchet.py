@@ -1,38 +1,35 @@
 import re
+import time as t
 
 def read(filename):
-    num1 = ""
-    num2 = ""
-    null = ""
     cumulative = 0
     with open(filename) as file:
         for line in file:
-            num1 = ""
-            line = line_sterilize(line)
-            for letter in line:
-                if letter.isnumeric():
-                    if num1 == null:
-                        num1 = letter
-                    num2 = letter
-            number = num1 + "" + num2
-            cumulative = cumulative + int(number)
+            new = line_sterilize(line)
+            numbers = re.findall("\d", new)
+            cumulative = cumulative + int(numbers[0] + numbers[len(numbers) - 1])
     return cumulative
 
 def line_sterilize(str):
     words = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
     for word in words:
-        if re.match(word, str):
+        if re.search(word, str):
             str = remove(str, word)
+    return str
 
-    
 def remove(str, word):
     number = get_number(word)
     length = len(word)
-    
+    # print(str)
+
     for i in range(0, len(str) - length):
-        temp = str[i, i + length]
+        temp = str[i:i + length]
         if temp == word:
-            str = str[0,i] + number + str[ i+length]
+            # print(str[:i])
+            # print(str[i + length])
+            str = str[:i] + number + str[i + length: ]
+
+    return str
 
 def get_number(number):
     match number:
@@ -56,7 +53,11 @@ def get_number(number):
             return "9"
 
 def main():
+    start = t.perf_counter()
     print(read("Day 1\Trebuchet.txt"))
+    end = t.perf_counter()
+    print("Elpased Time: " + str(end - start))
+    
 
 if __name__ == "__main__":
     main()
